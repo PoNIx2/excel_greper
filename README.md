@@ -57,10 +57,6 @@ Sub SearchExcelFilesAndOutputResults()
                         resultWs.Cells(resultRow, 4).Value = found.Value
                         resultRow = resultRow + 1
                         Set found = ws.Cells.FindNext(found)
-                    Loop While Not found Is Nothing And found.Address
-                        resultWs.Cells(resultRow, 4).Value = found.Value
-                        resultRow = resultRow + 1
-                        Set found = ws.Cells.FindNext(found)
                     Loop While Not found Is Nothing And found.Address <> ws.Cells.Find(What:=searchString, LookIn:=xlValues, LookAt:=xlPart, MatchCase:=False).Address
                 End If
             Next ws
