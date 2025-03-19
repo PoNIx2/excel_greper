@@ -4,13 +4,7 @@
 ```
 Sub SearchExcelFilesAndOutputResults()
     Dim folderPath As String
-    Dim fso As Object
-    Dim folder As Object
-    Dim file As Object
-    Dim wb As Workbook
-    Dim ws As Worksheet
     Dim searchString As String
-    Dim found As Range
     Dim resultWb As Workbook
     Dim resultWs As Worksheet
     Dim resultRow As Long
@@ -30,8 +24,27 @@ Sub SearchExcelFilesAndOutputResults()
     resultWs.Cells(1, 2).Value = "シート名"
     resultWs.Cells(1, 3).Value = "セルアドレス"
     resultWs.Cells(1, 4).Value = "内容"
+    resultWs.Cells(1, 5).Value = "リンク"
     
     resultRow = 2 ' 結果の出力開始行
+    
+    ' 再帰的にフォルダを検索
+    Call SearchFolder(folderPath, searchString, resultWs, resultRow)
+    
+    ' オブジェクトを解放
+    Set resultWb = Nothing
+    Set resultWs = Nothing
+End Sub
+
+Sub SearchFolder(folderPath As String, searchString As String, resultWs As Worksheet, ByRef resultRow As Long)
+    Dim fso As Object
+    Dim folder As Object
+    Dim subFolder As Object
+    Dim file As Object
+    Dim wb As Workbook
+    Dim ws As Worksheet
+    Dim found As Range
+    Dim linkAddress As String
     
     ' ファイルシステムオブジェクトを作成
     Set fso = CreateObject("Scripting.FileSystemObject")
@@ -70,11 +83,13 @@ Sub SearchExcelFilesAndOutputResults()
         End If
     Next file
     
+    ' サブフォルダをループ
+    For Each subFolder In folder.SubFolders
+        ' 再帰的にサブフォルダを検索
+        Call SearchFolder(subFolder.Path, searchString, resultWs, resultRow)
+    Next subFolder
+    
     ' オブジェクトを解放
     Set fso = Nothing
     Set folder = Nothing
-    Set resultWb = Nothing
-    Set resultWs = Nothing
 End Sub
-```
-
